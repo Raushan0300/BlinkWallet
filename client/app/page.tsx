@@ -1,4 +1,3 @@
-import { ModeToggle } from "@/components/theme-mode";
 import { buttonVariants } from "@/components/ui/button"
 import Link from "next/link";
 
