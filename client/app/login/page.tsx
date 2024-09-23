@@ -1,9 +1,12 @@
+"use client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 
 const page = () => {
+  const  router = useRouter();
   return (
     <div className="flex flex-col justify-center items-center h-screen">
       <Tabs
@@ -16,7 +19,7 @@ const page = () => {
         <TabsContent value="login" className="flex flex-col gap-3">
          <Input placeholder="Email" type="email" />
             <Input placeholder="Password" type="password" />
-            <Button>Log in</Button>
+            <Button onClick={()=>{router.push("/home")}} >Log in</Button>
         </TabsContent>
         <TabsContent value="signup" className="flex flex-col gap-3">
             <Input placeholder="Name" type="text" />
