@@ -21,7 +21,9 @@ const Login = () => {
       return;
     }
     const res = await fetchData("/login", "POST", {email, password}, {});
+
     if(res.status === 200){
+      localStorage.setItem("token", res.data.token);
       router.push("/home");
     } else if(res.status === 401){
       setError("Invalid password");
