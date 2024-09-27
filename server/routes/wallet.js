@@ -19,12 +19,13 @@ router.get('/', authenticatedToken, async(req, res)=>{
                 balance: 0
             });
             await newWallet.save();
+            return res.status(200).json({name: user.name, balance: newWallet.balance});
         };
 
-        res.status(200).json({walletId:wallet._id, name: user.name, balance: wallet.balance});
+        return res.status(200).json({name: user.name, balance: wallet.balance});
     } catch (error) {
         console.log(error);
-        res.status(500).json({message: 'Internal Server Error'});
+        return res.status(500).json({message: 'Internal Server Error'});
     }
 });
 

@@ -20,6 +20,7 @@ app.use('/register', require('./routes/register'));
 app.use('/login', require('./routes/login'));
 app.use('/wallet', require('./routes/wallet'));
 app.use('/history', require('./routes/history'));
+app.use('/add-money', require('./routes/addMoney'));
 
 app.listen(PORT, ()=>{
     console.log(`Server is running on port ${PORT}`);
