@@ -58,7 +58,7 @@ const Page = () => {
 
   const handleAmountChange = (e: any) => {
     const value = e.target.value;
-    
+
     if (/^\d*$/.test(value)) {
       setAmount(value);
     } else {
@@ -113,17 +113,49 @@ const Page = () => {
                   Add Money to your Wallet
                 </DialogDescription>
               </DialogHeader>
-              <Input placeholder="Enter Amount" type="text" value={amount} onChange={(e)=>{handleAmountChange(e)}} />
-              <Button className="bg-amber-500 font-bold" onClick={()=>{handleAddMoney()}}>Add Money</Button>
+              <Input placeholder="Enter Amount" type="text" value={amount} onChange={(e) => { handleAmountChange(e) }} />
+              <Button className="bg-amber-500 font-bold" onClick={() => { handleAddMoney() }}>Add Money</Button>
             </DialogContent>
           </Dialog>
 
-          <div className="px-5 py-2 flex flex-col items-center justify-center rounded-lg bg-amber-500 font-bold text-2xl h-[60px] text-[#333] hover:bg-white cursor-pointer">
+          <Dialog>
+            <DialogTrigger>
+              <div className="px-5 py-2 flex flex-col items-center justify-center rounded-lg bg-amber-500 font-bold text-2xl h-[60px] text-[#333] hover:bg-white cursor-pointer">
                 Send Money
               </div>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Send Money</DialogTitle>
+                <DialogDescription>
+                  Send Money to your Friends
+                </DialogDescription>
+              </DialogHeader>
+              <Input placeholder="Enter email" type="text" />
+              <Input placeholder="Enter Amount" type="text" />
+              <Button className="bg-amber-500 font-bold">Send Money</Button>
+            </DialogContent>
+          </Dialog>
+
+          <Dialog>
+            <DialogTrigger>
               <div className="px-5 py-2 flex flex-col items-center justify-center rounded-lg bg-amber-500 font-bold text-2xl h-[60px] text-[#333] hover:bg-white cursor-pointer">
                 Request Money
               </div>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Request Money</DialogTitle>
+                <DialogDescription>
+                  Request Money from your Friends
+                </DialogDescription>
+              </DialogHeader>
+              <Input placeholder="Enter email" type="text" />
+              <Input placeholder="Enter Amount" type="text" />
+              <Button className="bg-amber-500 font-bold">Request Money</Button>
+            </DialogContent>
+            </Dialog>
+          
         </div>
       </div>
 
@@ -136,10 +168,10 @@ const Page = () => {
             <div
               key={index}
               className="flex justify-between">
-                <div className="flex flex-col">
-                  <h1>{item.name}</h1>
-                  <p className="text-slate-400">{item.type}</p>
-                </div>
+              <div className="flex flex-col">
+                <h1>{item.name}</h1>
+                <p className="text-slate-400">{item.type}</p>
+              </div>
               <h1>{item.amount}</h1>
             </div>
           ))
