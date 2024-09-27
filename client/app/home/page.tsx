@@ -7,6 +7,7 @@ import { fetchData } from "../client";
 const Page = () => {
   const [name, setName] = useState<string>("");
   const [balance, setBalance] = useState<number>(0);
+  const [history, setHistory] = useState<any>([]);
   useEffect(() => {
     const fetchWalletData = async () => {
       const token = localStorage.getItem("token");
@@ -23,7 +24,25 @@ const Page = () => {
         console.log("Something went wrong");
       }
     };
-    fetchWalletData();
+    const fetchHistoryData = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        window.location.href = "/login";
+      }
+      const res = await fetchData("/history", "GET", {}, { token });
+      if (res.status === 200) {
+        setHistory(res.data);
+      } else if (res.status === 404) {
+        window.location.href = "/login";
+      } else {
+        console.log("Something went wrong");
+      }
+    }
+   const getAllData= async()=>{
+await fetchWalletData();
+await fetchHistoryData();
+   }
+   getAllData();
   }, []);
 
   return (
@@ -56,33 +75,15 @@ const Page = () => {
       <h1 className=" text-3xl mt-6 ml-5">Transaction History:</h1>
       <hr className=" ml-5 mr-5 border-t-2 border-gray-400" />
 
-      <h1 className=" text-2xl mt-6 ml-5">name</h1>
-      <h1 className=" text-2xl mt-1 ml-5">date</h1>
-      <hr className=" ml-5 mr-5 border-t-2 border-gray-400 mt-3" />
+      <div className="flex flex-col gap-4 m-5">
 
-      <h1 className=" text-2xl mt-6 ml-5">name</h1>
-      <h1 className=" text-2xl mt-1 ml-5">date</h1>
-      <hr className=" ml-5 mr-5 border-t-2 border-gray-400 mt-3" />
-
-      <h1 className=" text-2xl mt-6 ml-5">name</h1>
-      <h1 className=" text-2xl mt-1 ml-5">date</h1>
-      <hr className=" ml-5 mr-5 border-t-2 border-gray-400 mt-3" />
-
-      <h1 className=" text-2xl mt-6 ml-5">name</h1>
-      <h1 className=" text-2xl mt-1 ml-5">date</h1>
-      <hr className=" ml-5 mr-5 border-t-2 border-gray-400 mt-3" />
-
-      <h1 className=" text-2xl mt-6 ml-5">name</h1>
-      <h1 className=" text-2xl mt-1 ml-5">date</h1>
-      <hr className=" ml-5 mr-5 border-t-2 border-gray-400 mt-3" />
-
-      <h1 className=" text-2xl mt-6 ml-5">name</h1>
-      <h1 className=" text-2xl mt-1 ml-5">date</h1>
-      <hr className=" ml-5 mr-5 border-t-2 border-gray-400 mt-3" />
-
-      <h1 className=" text-2xl mt-6 ml-5">name</h1>
-      <h1 className=" text-2xl mt-1 ml-5">date</h1>
-      <hr className=" ml-5 mr-5 border-t-2 border-gray-400 mt-3" />
+        {history.count>0 ? history.history.map((item:any, index:any) => (
+          <div key={index} className="flex justify-between">
+            <h1>{item.type}</h1>
+            <h1>{item.amount}</h1>
+          </div>
+        )): <h1>No transactions yet</h1>} 
+      </div>
     </div>
   );
 };
