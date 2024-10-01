@@ -22,6 +22,7 @@ app.use('/wallet', require('./routes/wallet'));
 app.use('/history', require('./routes/history'));
 app.use('/add-money', require('./routes/addMoney'));
 app.use('/send-money', require('./routes/sendMoney'));
+app.use('/user-info', require('./routes/userInfo'));
 
 app.listen(PORT, ()=>{
     console.log(`Server is running on port ${PORT}`);
