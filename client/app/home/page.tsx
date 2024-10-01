@@ -12,12 +12,24 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+
+import { AvatarIcon } from "@radix-ui/react-icons";
 
 const Page = () => {
   const [name, setName] = useState<string>("");
   const [balance, setBalance] = useState<number>(0);
   const [history, setHistory] = useState<any>([]);
   const [amount, setAmount] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [amountToSend, setAmountToSend] = useState<string>("");
 
   useEffect(() => {
     const fetchWalletData = async () => {
@@ -65,6 +77,15 @@ const Page = () => {
       return;
     }
   };
+  const handleAmountToSendChange = (e: any) => {
+    const value = e.target.value;
+
+    if (/^\d*$/.test(value)) {
+      setAmountToSend(value);
+    } else {
+      return;
+    }
+  }
 
   const handleAddMoney = async () => {
     const token = localStorage.getItem("token");
@@ -81,15 +102,65 @@ const Page = () => {
       console.log("Something went wrong");
     }
   };
+  const handleSendMoney = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      window.location.href = "/login";
+    }
+    const Intamount = parseInt(amountToSend);
+    const res = await fetchData("/send-money", "POST", { amount: Intamount, email }, { token });
+    if (res.status === 200) {
+      setBalance(res.data.balance);
+    } else if (res.status === 404) {
+      window.location.href = "/login";
+    } else if (res.status === 406) {
+      console.log("user not found");
+    }
 
+    else {
+      console.log("Something went wrong");
+    }
+  }
   return (
     <div>
-      <div className="w-full h-[70px] bg-[#3D3D5C] px-5">
+      <div className="w-full h-[70px] bg-[#3D3D5C] px-5 flex justify-between">
         <img
           src="/logo.png"
           alt="logo"
           className="h-20 w-20"
         />
+         <Dialog>
+        <DropdownMenu>
+          <DropdownMenuTrigger><AvatarIcon className="h-10 w-10" /></DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuLabel className="cursor-pointer text-amber-500">{name}</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            
+            
+           
+              <DialogTrigger asChild>
+              <DropdownMenuItem className="cursor-pointer">
+                <span>Profile Setting</span>
+                </DropdownMenuItem>
+              </DialogTrigger>
+              <DropdownMenuItem className="cursor-pointer">Orders & Bookings</DropdownMenuItem>
+            <DropdownMenuItem className="cursor-pointer">Refer & Win</DropdownMenuItem>
+            <DropdownMenuItem className="cursor-pointer">Help & Support</DropdownMenuItem>
+            </DropdownMenuContent>
+            </DropdownMenu>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Profile Update</DialogTitle>
+                  <DialogDescription>
+                    Update your Profile
+                  </DialogDescription>
+                </DialogHeader>
+                <Input placeholder="Enter Name" type="text" />
+                <Button className="bg-amber-500 font-bold">Update Details</Button>
+              </DialogContent>
+        
+        </Dialog>
+
       </div>
 
       <h1 className="font-bold text-3xl mt-6 ml-5">Welcome, {name}</h1>
@@ -131,9 +202,9 @@ const Page = () => {
                   Send Money to your Friends
                 </DialogDescription>
               </DialogHeader>
-              <Input placeholder="Enter email" type="text" />
-              <Input placeholder="Enter Amount" type="text" />
-              <Button className="bg-amber-500 font-bold">Send Money</Button>
+              <Input placeholder="Enter email" type="text" value={email} onChange={(e) => { setEmail(e.target.value) }} />
+              <Input placeholder="Enter Amount" type="text" value={amountToSend} onChange={(e) => { handleAmountToSendChange(e) }} />
+              <Button className="bg-amber-500 font-bold" onClick={() => { handleSendMoney() }}>Send Money</Button>
             </DialogContent>
           </Dialog>
 
@@ -154,8 +225,8 @@ const Page = () => {
               <Input placeholder="Enter Amount" type="text" />
               <Button className="bg-amber-500 font-bold">Request Money</Button>
             </DialogContent>
-            </Dialog>
-          
+          </Dialog>
+
         </div>
       </div>
 
@@ -164,15 +235,21 @@ const Page = () => {
 
       <div className="flex flex-col gap-4 m-5">
         {history.count > 0 ? (
-          history.history.map((item: any, index: any) => (
-            <div
-              key={index}
-              className="flex justify-between">
-              <div className="flex flex-col">
-                <h1>{item.name}</h1>
-                <p className="text-slate-400">{item.type}</p>
+          history.history.slice().reverse().map((item: any, index: any) => (
+            <div key={index}>
+              
+              <div
+            
+                className="flex justify-between">
+                <div className="flex flex-col">
+                  <h1>{item.name}</h1>
+                  <p className="text-slate-400">{item.type}</p>
+                  <p>{new Date(item.date).toLocaleDateString("en-IN") + ' ' + new Date(item.date).toLocaleTimeString("en-IN")}</p>
+
+                </div>
+                <h1 className={`text-2xl ${item.type === "debit" ? "text-red-700" : "text-green-700"}`}>{item.type === "debit" ? `- ${item.amount}` : `+ ${item.amount}`}</h1>
               </div>
-              <h1>{item.amount}</h1>
+              <hr className="border-t-2 border-gray-400" />
             </div>
           ))
         ) : (

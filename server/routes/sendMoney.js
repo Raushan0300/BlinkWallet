@@ -10,6 +10,7 @@ const User = require('../models/Users');
 
 router.post('/', authenticatedToken, async(req, res)=>{
     const {email, amount} = req.body;
+   
     if(!email || !amount) return res.status(400).json({message: 'Email and Amount is required'});
     if(amount <= 0) return res.status(400).json({message: 'Amount must be greater than 0'});
     if(email === req.user.email) return res.status(400).json({message: 'You cannot send money to yourself'});
@@ -19,7 +20,7 @@ router.post('/', authenticatedToken, async(req, res)=>{
         if(wallet.balance < amount) return res.status(400).json({message: 'Insufficient Balance'});
 
         const user = await User.findOne({email});
-        if(!user) return res.status(404).json({message: 'User Not Found'});
+        if(!user) return res.status(406).json({message: 'User Not Found'});
 
         const userWallet = await Wallet.findOne({user: user._id});
         if(!userWallet) return res.status(404).json({message: 'User Wallet Not Found'});
@@ -49,6 +50,7 @@ router.post('/', authenticatedToken, async(req, res)=>{
             date: Date.now()
         });
         await userHistory.save();
+        return res.status(200).json({balance:newBalance ,message: 'Money Sent Successfully'});
     } catch (error) {
         console.log(error);
         return res.status(500).json({message: 'Internal Server Error'});
