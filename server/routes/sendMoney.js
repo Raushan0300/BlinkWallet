@@ -10,6 +10,7 @@ const User = require('../models/Users');
 
 router.post('/', authenticatedToken, async(req, res)=>{
     const {email, amount} = req.body;
+   
     if(!email || !amount) return res.status(400).json({message: 'Email and Amount is required'});
     if(amount <= 0) return res.status(400).json({message: 'Amount must be greater than 0'});
     if(email === req.user.email) return res.status(400).json({message: 'You cannot send money to yourself'});
