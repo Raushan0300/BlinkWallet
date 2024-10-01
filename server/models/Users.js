@@ -12,7 +12,9 @@ const Users = new mongoose.Schema({
     password: {
         type: String,
         required: true
-    }
+    },
+    dob: String,
+    phone: String,
 });
 
 const UsersModel = mongoose.model('Users', Users);
