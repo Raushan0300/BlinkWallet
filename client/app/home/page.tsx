@@ -22,6 +22,8 @@ import {
 } from "@/components/ui/dropdown-menu"
 
 import { AvatarIcon } from "@radix-ui/react-icons";
+import { Item } from "@radix-ui/react-dropdown-menu";
+import { Console } from "console";
 
 const Page = () => {
   const [name, setName] = useState<string>("");
@@ -30,6 +32,11 @@ const Page = () => {
   const [amount, setAmount] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [amountToSend, setAmountToSend] = useState<string>("");
+  const [userInfo , setuserInfo] = useState<any>([]);
+  const [dob, setDob]=useState<any>("");
+  const [updateEmail , setUpdateEmail] = useState<any>("");
+  const [updateName , setUpdateName] = useState<any>("");
+  
 
   useEffect(() => {
     const fetchWalletData = async () => {
@@ -64,6 +71,7 @@ const Page = () => {
     const getAllData = async () => {
       await fetchWalletData();
       await fetchHistoryData();
+
     };
     getAllData();
   }, []);
@@ -121,6 +129,45 @@ const Page = () => {
       console.log("Something went wrong");
     }
   }
+  const fetchUserInfo = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      window.location.href = "/login";
+    }
+    const res = await fetchData("/user-info", "GET", {}, { token });
+    if (res.status === 200) {
+      setuserInfo(res.data);
+      
+    } 
+   
+    else if (res.status === 404) {
+      window.location.href = "/login";
+    } else {
+      console.log("Something went wrong");
+    }
+
+  }
+const handleUpdateUserInfo = async () => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    window.location.href = "/login";
+  }
+  const res = await fetchData("/edit-profile", "POST", {name:updateName, email:updateEmail, dob:dob}, { token });
+  if (res.status === 200) {
+    setuserInfo(res.data);
+    
+  } 
+  else if (res.status === 404) {
+    window.location.href = "/login";
+  } else {
+    console.log("Something went wrong");
+  }
+}
+
+const handleLogout = () => {
+  localStorage.removeItem("token");
+  window.location.href = "/login";
+};
   return (
     <div>
       <div className="w-full h-[70px] bg-[#3D3D5C] px-5 flex justify-between">
@@ -140,23 +187,53 @@ const Page = () => {
            
               <DialogTrigger asChild>
               <DropdownMenuItem className="cursor-pointer">
-                <span>Profile Setting</span>
+                <span onClick={() => {fetchUserInfo() }}>Profile Setting</span>
                 </DropdownMenuItem>
               </DialogTrigger>
+            
+
               <DropdownMenuItem className="cursor-pointer">Orders & Bookings</DropdownMenuItem>
             <DropdownMenuItem className="cursor-pointer">Refer & Win</DropdownMenuItem>
             <DropdownMenuItem className="cursor-pointer">Help & Support</DropdownMenuItem>
+            <DropdownMenuItem className="cursor-pointer text-red-600" onClick={handleLogout}>
+      Logout
+    </DropdownMenuItem>
             </DropdownMenuContent>
             </DropdownMenu>
               <DialogContent>
                 <DialogHeader>
                   <DialogTitle>Profile Update</DialogTitle>
                   <DialogDescription>
-                    Update your Profile
+                    your Profile Information
                   </DialogDescription>
                 </DialogHeader>
-                <Input placeholder="Enter Name" type="text" />
-                <Button className="bg-amber-500 font-bold">Update Details</Button>
+              <div>
+               
+                <div><b>Name: </b> {userInfo.user?.name}</div>
+                <div><b>Email: </b> {userInfo.user?.email}</div>
+                <div><b>DOB: </b> {userInfo.dob?.phone}</div>
+                
+              </div>
+              <Dialog>
+            <DialogTrigger>
+              <div className="px-5 py-2 flex flex-col items-center justify-center rounded-lg bg-amber-500 font-bold text-2xl h-[60px] text-[#333] hover:bg-white cursor-pointer">
+              Edit Details
+              </div>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Edit Details</DialogTitle>
+                <DialogDescription>
+                  Add and Update your Details
+                </DialogDescription>
+              </DialogHeader>
+              <Input placeholder="Enter Name" value={updateName} onChange={(e) => setUpdateName( e.target.value )} />
+            <Input placeholder="Enter Email" value={updateEmail} onChange={(e) => setUpdateEmail( e.target.value)} />
+            <Input placeholder ="Enter DOB" value={dob} onChange={(e) => setDob(e.target.value)} />
+            <Button className="bg-green-700 font-bold mt-4" onClick={handleUpdateUserInfo}>Save Details</Button>
+            </DialogContent>
+          </Dialog>
+
               </DialogContent>
         
         </Dialog>
