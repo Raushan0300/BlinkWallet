@@ -22,9 +22,6 @@ import {
 } from "@/components/ui/dropdown-menu"
 
 import { AvatarIcon } from "@radix-ui/react-icons";
-import { Item } from "@radix-ui/react-dropdown-menu";
-import { Console } from "console";
-
 const Page = () => {
   const [name, setName] = useState<string>("");
   const [balance, setBalance] = useState<number>(0);
