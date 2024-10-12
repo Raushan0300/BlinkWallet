@@ -104,6 +104,8 @@ const Page = () => {
     const res = await fetchData("/add-money", "POST", { amount: Intamount }, { token });
     if (res.status === 200) {
       setBalance(res.data.balance);
+      window.location.href = "/home";
+      console.log("Money added successfully");
     } else if (res.status === 404) {
       window.location.href = "/login";
     } else {
@@ -119,6 +121,8 @@ const Page = () => {
     const res = await fetchData("/send-money", "POST", { amount: Intamount, email }, { token });
     if (res.status === 200) {
       setBalance(res.data.balance);
+      window.location.href = "/home";
+      console.log("Money sent successfully");
     } else if (res.status === 404) {
       window.location.href = "/login";
     } else if (res.status === 406) {
